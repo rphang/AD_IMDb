@@ -17,28 +17,18 @@ basicsDf = pd.read_csv('./data/title.basics.tsv',
                         'genres': str # multi valued ("genre1,genre2,...")
                  }
 )
-reviewsDf = pd.read_csv('./data/title.ratings.tsv',
-                        sep='\t',
-                        header=0,
-                        dtype={
-                            'tconst': str,
-                            'averageRating': str,
-                            'numVotes': str
-                        }
-)
-combinedDf = basicsDf.merge(reviewsDf, on=['tconst'], how='inner')
 
 # Converting these fkn columns to numeric
-combinedDf['startYear'] = pd.to_numeric(combinedDf['startYear'], errors='coerce')
-combinedDf['endYear'] = pd.to_numeric(combinedDf['endYear'], errors='coerce')
-combinedDf['runtimeMinutes'] = pd.to_numeric(combinedDf['runtimeMinutes'], errors='coerce')
-combinedDf['averageRating'] = pd.to_numeric(combinedDf['averageRating'], errors='coerce').fillna(0)
+basicsDf['startYear'] = pd.to_numeric(basicsDf['startYear'], errors='coerce')
+basicsDf['endYear'] = pd.to_numeric(basicsDf['endYear'], errors='coerce')
+basicsDf['runtimeMinutes'] = pd.to_numeric(basicsDf['runtimeMinutes'], errors='coerce')
+basicsDf['averageRating'] = pd.to_numeric(basicsDf['averageRating'], errors='coerce').fillna(0)
 
 app = Dash()
 
 app.layout = [
     html.H1(children='Title of Dash App', style={'textAlign':'center'}),
-    dcc.Dropdown(combinedDf.titleType.unique(), 'movie', id='dropdown-selection'),
+    dcc.Dropdown(basicsDf.titleType.unique(), 'movie', id='dropdown-selection'),
     dcc.Graph(id='graph-content')
 ]
 
@@ -47,10 +37,26 @@ app.layout = [
     Input('dropdown-selection', 'value')
 )
 def update_graph(value):
-    dff = combinedDf[combinedDf.titleType==value]
+    dff = basicsDf[basicsDf.titleType==value]
     # Sort the X axis
     dff = dff.sort_values('startYear')
     return px.scatter(dff, x='startYear', y='averageRating', color='genres', hover_name='primaryTitle')
+
+# K Means test
+from sklearn.cluster import KMeans
+import numpy as np
+
+# start time
+import time
+start = time.time()
+
+kmeans = KMeans(n_clusters=3)
+kmeans.fit(basicsDf[['startYear', 'averageRating']])
+basicsDf['cluster'] = kmeans.predict(basicsDf[['startYear', 'averageRating']])
+fig = px.scatter(basicsDf, x='startYear', y='averageRating', color='cluster')
+end = time.time()
+print('Time taken:', end-start)
+fig.show()
 
 if __name__ == '__main__':
     app.run(debug=True)
