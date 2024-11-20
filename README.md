@@ -34,7 +34,7 @@ We have a dataset of movies, actors & ratings
 
 - pie charts by category, type, etc
 
-- average movie length by genre/decade
+- average movie length by decade
 
 - average producted movies by year
 

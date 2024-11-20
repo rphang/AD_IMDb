@@ -1,3 +1,4 @@
+from flask_caching import Cache
 from dash import Dash, html, dcc, page_registry, page_container
 import dash_bootstrap_components as dbc
 
@@ -8,6 +9,7 @@ from data.loader import loadBasics
 basicsDf = loadBasics()
 
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP], use_pages=True)
+cache = Cache(app.server, config={'CACHE_TYPE': 'SimpleCache'})
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_STYLE = {

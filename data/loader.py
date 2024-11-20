@@ -1,6 +1,6 @@
 import pandas as pd
 
-def loadBasics(cleaning=True):
+def loadBasics(cleaning=True, normalize=True):
     basicsDf = pd.read_csv('./data/title.basics.tsv', 
                  sep='\t',
                  header=0,
