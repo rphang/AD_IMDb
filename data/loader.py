@@ -25,5 +25,6 @@ def loadBasics(cleaning=True, normalize=True):
     basicsDf['runtimeMinutes'] = pd.to_numeric(basicsDf['runtimeMinutes'], errors='coerce')
     basicsDf['averageRating'] = pd.to_numeric(basicsDf['averageRating'], errors='coerce').fillna(0)
     basicsDf['genres'] = basicsDf['genres'].str.split(',')
+    basicsDf = basicsDf.dropna()
     
     return basicsDf
