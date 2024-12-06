@@ -4,9 +4,9 @@ import dash_bootstrap_components as dbc
 
 import plotly.express as px
 
-from data.loader import loadBasics
+from data.loader import loadNewDataset
 
-basicsDf = loadBasics()
+basicsDf = loadNewDataset()
 
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP], use_pages=True)
 cache = Cache(app.server, config={'CACHE_TYPE': 'SimpleCache'})

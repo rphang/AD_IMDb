@@ -1,5 +1,5 @@
-import dash
-from dash import html, dcc, callback, Input, Output
+"""import dash
+from dash import html, dcc,callback, Input, Output
 import plotly.express as px
 
 from data.loader import loadBasics
@@ -68,4 +68,4 @@ def update_runtimeMinutes_trends(input):
     filteredDf = basicsDf[basicsDf['startYear'] == input]
     fig = px.scatter(filteredDf, x='runtimeMinutes', y='averageRating', title='Trends of runtimeMinutes over time')
     fig.update_layout(xaxis_title='runtimeMinutes', yaxis_title='Average rating')
-    return fig
+    return fig"""
