@@ -6,11 +6,11 @@ import base64
 import dash
 from dash import html, dcc,callback, Input, Output
 import dash_bootstrap_components as dbc
-from data.loader import loadNewDataset
+from data.loader import getDataset
 import plotly.express as px
 
 # Load Dataset
-df = loadNewDataset()
+df = getDataset()
 
 df['Genre'] = df['Genre'].fillna('Unknown')  # Handle missing genres
 expanded_df = df.assign(Genre=df['Genre'].str.split(', ')).explode('Genre')  # Split and expand genres

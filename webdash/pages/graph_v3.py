@@ -4,9 +4,9 @@ from dash import dcc, html
 import dash_bootstrap_components as dbc
 import networkx as nx
 import plotly.graph_objects as go
-from data.loader import loadNewDataset
+from data.loader import getDataset
 # Load Dataset
-df = loadNewDataset()
+df = getDataset()
 df_copy = df.copy()
 
 # Step 1: Extract Top 20 Actors
