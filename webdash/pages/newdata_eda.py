@@ -12,51 +12,43 @@ import plotly.express as px
 # Load Dataset
 df = getDataset()
 
-df['Genre'] = df['Genre'].fillna('Unknown')  # Handle missing genres
-expanded_df = df.assign(Genre=df['Genre'].str.split(', ')).explode('Genre')  # Split and expand genres
-genre_counts = expanded_df['Genre'].value_counts().reset_index()  # Count genres
+df['Genre'] = df['Genre'].fillna('Unknown')  
+expanded_df = df.assign(Genre=df['Genre'].str.split(', ')).explode('Genre')
+genre_counts = expanded_df['Genre'].value_counts().reset_index() 
 genre_counts.columns = ['Genre', 'Count']
 
-# Select Numeric Features
-# Select only numeric columns for correlation
 numeric_cols = df.select_dtypes(include=['float64', 'int64', 'Int64'])
-
-# Compute the correlation matrix
 corr_matrix = numeric_cols.corr()
 
 
 top_directors = df['Director'].value_counts().reset_index().head(10)
 top_directors.columns = ['Director', 'Count']
 
-
 certificate_counts = df['Certificate'].value_counts().reset_index()
 certificate_counts.columns = ['Certificate', 'Count']
-
-
 
 df_years_genre = df.dropna(subset=["Released_Year", "Genre"])
 df_years_genre["Released_Year"] = pd.to_numeric(df_years_genre["Released_Year"], errors="coerce")  # Ensure Year is numeric
 df_years_genre = df_years_genre.dropna(subset=["Released_Year"])
 df_years_genre["Released_Year"] = df_years_genre["Released_Year"].astype(int)
 
-# Split Genre into multiple rows if there are multiple genres per movie
 genre_split = df["Genre"].str.split(", ").explode()
-
-# Group by year and genre
 genre_distribution = genre_split.groupby([df["Released_Year"], genre_split]).size().unstack(fill_value=0)
 
+df_genre_gross = df[["Genre", "Gross"]]  
+df_genre_gross["Gross"] = pd.to_numeric(df_genre_gross["Gross"], errors="coerce")  
+df_genre_gross = df_genre_gross.dropna(subset=["Gross"]) 
 
-
-
-# Preprocessing: Handle missing values and expand Genre column
-df_genre_gross = df.dropna(subset=["Genre", "Gross"])  # Drop rows with missing genres or gross revenue
-df_genre_gross["Gross"] = pd.to_numeric(df_genre_gross["Gross"], errors="coerce")  # Ensure Gross is numeric
-df_genre_gross = df_genre_gross.dropna(subset=["Gross"])  # Drop rows with non-numeric Gross
-
-# Split Genre into multiple rows if movies belong to multiple genres
+unique_genres = sorted(set(genre.strip() for genres in df['Genre'].dropna() for genre in genres.split(', ')))
+unique_genres.insert(0, 'All')
 expanded_frame = df_genre_gross.assign(Genre=df_genre_gross["Genre"].str.split(", ")).explode("Genre")
 
+df['Released_Year'] = pd.to_numeric(df['Released_Year'], errors='coerce')
+avg_rating_per_year = df.groupby('Released_Year')['IMDB_Rating'].mean().reset_index()
+avg_rating_per_year = avg_rating_per_year.dropna().sort_values('Released_Year')
 
+avg_gross_per_year = df.groupby('Released_Year')['Gross'].mean().reset_index()
+avg_gross_per_year = avg_gross_per_year.dropna().sort_values('Released_Year')
 
 df_copy = df.copy()
 
@@ -65,7 +57,6 @@ df_copy['No_of_Votes'] = pd.to_numeric(df_copy['No_of_Votes'], errors='coerce')
 df_scatter = df_copy[['No_of_Votes', 'Gross']].dropna()  # Drop rows with missing values
 
 dash.register_page(__name__)
-# Layout
 layout = dbc.Container([
     dbc.Row([
         dbc.Col(html.H1("Pairplot Visualization", className="text-center"), width=12)
@@ -84,9 +75,8 @@ layout = dbc.Container([
             html.Div(id='pairplot-container', className="mt-4")
         ], width=12)
     ]),
-    html.Hr(),  # Separator
+    html.Hr(), 
     dbc.Row([
-        # Column 1: Top Directors
         dbc.Col([
             dcc.Graph(
                 id='top-directors-bar-plot',
@@ -104,7 +94,6 @@ layout = dbc.Container([
                 )
             )
         ], width=6),
-        # Column 2: Certificate Distribution
         dbc.Col([
             dcc.Graph(
                 id='certificate-bar-plot',
@@ -123,7 +112,7 @@ layout = dbc.Container([
             )
         ], width=6)
     ]),
-    html.Hr(),  # Separator
+    html.Hr(),
     dbc.Row([
         dbc.Col(html.H1("Movie Genres Distribution", className="text-center"), width=12)
     ]),
@@ -132,7 +121,7 @@ layout = dbc.Container([
             dcc.Graph(id='genre-bar-plot')
         ], width=12)
     ]),
-    html.Hr(),  # Separator
+    html.Hr(),
     dbc.Row([
         dbc.Col(html.H1("Genre Trends Over the Years", className="text-center mb-4"), width=12)
     ]),
@@ -141,16 +130,16 @@ layout = dbc.Container([
             dcc.Graph(id="genre-trends-plot"),
         ], width=12)
     ]),
-    html.Hr(),  # Separator
+    html.Hr(), 
     dbc.Row([
         dbc.Col(html.H1("Average Gross Revenue by Genre", className="text-center mb-4"), width=12)
     ]),
     dbc.Row([
         dbc.Col([
-            dcc.Graph(id="average-gross-plot")  # Placeholder for the plot
+            dcc.Graph(id="average-gross-plot") 
         ], width=12)
     ]),
-    html.Hr(),  # Separator
+    html.Hr(), 
 
     dbc.Row([
         dbc.Col([
@@ -166,7 +155,7 @@ layout = dbc.Container([
             )
         ], width=12)
     ]),
-    html.Hr(),  # Separator
+    html.Hr(),
     dbc.Row([
         dbc.Col(html.H1("Correlation Between Votes and Gross", className="text-center mb-4"), width=12)
     ]),
@@ -180,18 +169,41 @@ layout = dbc.Container([
                     y='Gross',
                     title="Correlation Between Number of Votes and Gross",
                     labels={'No_of_Votes': 'Number of Votes', 'Gross': 'Gross Revenue'},
-                    trendline='ols',  # Add a trendline to visualize the correlation
-                    color_discrete_sequence=['#636EFA']  # Customize the color
+                    trendline='ols',  
+                    color_discrete_sequence=['#636EFA'] 
                 ).update_layout(
                     margin=dict(l=40, r=40, t=40, b=40),
                     height=600
                 )
             )
         ], width=12)
+    ]),
+    html.Hr(), 
+        dbc.Row([
+        dbc.Col(html.H1("Average IMDb Rating and Gross Per Year (By Genre)", className="text-center mb-4"), width=12)
+    ]),
+    dbc.Row([
+        dbc.Col([
+            html.Label("Select Genre:"),
+            dcc.Dropdown(
+                id='genre-dropdown',
+                options=[{'label': genre, 'value': genre} for genre in unique_genres],
+                value='All', 
+                multi=False,
+                clearable=False
+            )
+        ], width=12)
+    ]),
+    dbc.Row([
+        dbc.Col([
+            dcc.Graph(id='avg-imdb-rating')
+        ], width=6),
+        dbc.Col([
+            dcc.Graph(id='avg-gross')
+        ], width=6)
     ])
 ])
 
-# Callback to Generate Pairplot
 @callback(
     Output('pairplot-container', 'children'),
     Input('generate-pairplot', 'n_clicks'),
@@ -199,19 +211,14 @@ layout = dbc.Container([
 )
 def update_pairplot(n_clicks, selected_features):
     if n_clicks > 0 and selected_features:
-        # Generate Pairplot
         sns.set(style="whitegrid")
         plt.style.use('Solarize_Light2')
         pairplot = sns.pairplot(df[selected_features])
-        
-        # Save Plot to a Bytes Buffer
         buf = io.BytesIO()
         pairplot.savefig(buf, format='png')
         buf.seek(0)
         encoded_image = base64.b64encode(buf.getvalue()).decode('utf-8')
         buf.close()
-
-        # Return the Image in Dash
         return html.Img(src=f'data:image/png;base64,{encoded_image}', style={'width': '100%'})
 
     return html.Div("Please select features and click Generate Pairplot.", style={'color': 'red', 'font-weight': 'bold'})
@@ -221,10 +228,9 @@ def update_pairplot(n_clicks, selected_features):
 
 @callback(
     Output('genre-bar-plot', 'figure'),
-    Input('genre-bar-plot', 'id')  # Trigger once on load
+    Input('genre-bar-plot', 'id')
 )
 def update_genre_plot(_):
-    # Create Bar Plot
     fig = px.bar(
         genre_counts,
         x='Count',
@@ -240,18 +246,12 @@ def update_genre_plot(_):
 
 @callback(
     Output("genre-trends-plot", "figure"),
-    Input("genre-trends-plot", "id")  # Trigger callback on load
+    Input("genre-trends-plot", "id") 
 )
 def update_genre_trends_plot(_):
-    # Get total count of movies for each genre across all years
     total_counts = genre_distribution.sum()
-
     top_genres = total_counts.nlargest(5).index
-
-    # Create a dataframe for the top genres
     top_genre_distribution = genre_distribution[top_genres]
-
-    # Create a line plot using Plotly
     fig = px.line(
         top_genre_distribution,
         x=top_genre_distribution.index,
@@ -260,7 +260,6 @@ def update_genre_trends_plot(_):
         title="Count of Movies for Each Genre Over the Years (Top 5)"
     )
 
-    # Update the layout for better appearance
     fig.update_layout(
         legend_title="Genre",
         xaxis_title="Year",
@@ -274,13 +273,10 @@ def update_genre_trends_plot(_):
 
 @callback(
     Output("average-gross-plot", "figure"),
-    Input("average-gross-plot", "id")  # Trigger callback on load
+    Input("average-gross-plot", "id") 
 )
 def update_average_gross_plot(_):
-    # Calculate the average gross revenue for each genre
     average_gross = expanded_frame.groupby("Genre")["Gross"].mean().sort_values(ascending=False)
-
-    # Create a bar plot using Plotly
     fig = px.bar(
         average_gross,
         x=average_gross.index,
@@ -289,13 +285,46 @@ def update_average_gross_plot(_):
         title="Average Gross Revenue for Each Genre",
         color=average_gross.index,
     )
-
-    # Customize the layout
     fig.update_layout(
         xaxis_title="Genre",
         yaxis_title="Average Gross Revenue",
-        xaxis_tickangle=70,  # Rotate x-axis labels for readability
-        margin=dict(l=20, r=20, t=40, b=100)  # Add extra space for rotated labels
+        xaxis_tickangle=70, 
+        margin=dict(l=20, r=20, t=40, b=100) 
     )
-
     return fig
+
+
+@callback(
+    [Output('avg-imdb-rating', 'figure'),
+    Output('avg-gross', 'figure')],
+    [Input('genre-dropdown', 'value')]
+)
+def update_graphs(selected_genre):
+    if selected_genre == 'All':
+        filtered_df = df
+    else:
+        filtered_df = df[df['Genre'].str.contains(selected_genre, na=False)]
+    avg_rating_per_year = (
+        filtered_df.groupby('Released_Year')['IMDB_Rating'].mean().reset_index()
+    ).dropna().sort_values('Released_Year')
+
+    avg_gross_per_year = (
+        filtered_df.groupby('Released_Year')['Gross'].mean().reset_index()
+    ).dropna().sort_values('Released_Year')
+    rating_fig = px.bar(
+        avg_rating_per_year,
+        x='Released_Year',
+        y='IMDB_Rating',
+        title=f'Average IMDb Rating Over the Years ({selected_genre})',
+        labels={'Released_Year': 'Year', 'IMDB_Rating': 'Average IMDb Rating'},
+        color_discrete_sequence=['#636EFA']
+    ).update_layout(xaxis=dict(tickangle=45), height=500)
+    gross_fig = px.bar(
+        avg_gross_per_year,
+        x='Released_Year',
+        y='Gross',
+        title=f'Average Gross Per Year ({selected_genre})',
+        labels={'Released_Year': 'Year', 'Gross': 'Average Gross Revenue'},
+        color_discrete_sequence=['#EF553B']
+    ).update_layout(xaxis=dict(tickangle=45), height=500)
+    return rating_fig, gross_fig

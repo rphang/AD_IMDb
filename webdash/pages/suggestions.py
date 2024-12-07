@@ -6,11 +6,9 @@ from data.loader import getDataset
 # Load Dataset
 df = getDataset()
 
-# Preprocess Dataset
-df['Genre'] = df['Genre'].fillna('Unknown')  # Handle missing genres
-df['IMDB_Rating'] = pd.to_numeric(df['IMDB_Rating'], errors='coerce')  # Ensure IMDB_Rating is numeric
 
-# Register the page
+df['Genre'] = df['Genre'].fillna('Unknown') 
+df['IMDB_Rating'] = pd.to_numeric(df['IMDB_Rating'], errors='coerce')
 dash.register_page(__name__)
 
 # Layout
