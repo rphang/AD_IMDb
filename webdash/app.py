@@ -32,7 +32,7 @@ sidebar = html.Div(
         html.Hr(),
         html.P(
             """
-            Analyse sur la base de données IMDB des films, séries et acteurs.
+            Analyse sur la base de données IMDB des films, réalisateurs et acteurs.
             """, className="lead"
         ),
         dbc.Nav(
