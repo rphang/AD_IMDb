@@ -1,45 +1,9 @@
 import pandas as pd
+import numpy as np
 
-"""def loadBasics(cleaning=True, normalize=True):
-    basicsDf = pd.read_csv('./data/title.basics.tsv', 
-                sep='\t',
-                header=0,
-                dtype={
-                        'tconst': str,
-                        'titleType': str,
-                        'primaryTitle': str,
-                        'originalTitle': str,
-                        'isAdult': str,
-                        'startYear': str,
-                        'endYear': str,
-                        'runtimeMinutes': str,
-                        'genres': str
-                 }
-    )
-    
-    if not cleaning:
-        return basicsDf
-    
-    basicsDf['startYear'] = pd.to_numeric(basicsDf['startYear'], errors='coerce')
-    basicsDf['endYear'] = pd.to_numeric(basicsDf['endYear'], errors='coerce')
-    basicsDf['runtimeMinutes'] = pd.to_numeric(basicsDf['runtimeMinutes'], errors='coerce')
-    basicsDf['averageRating'] = pd.to_numeric(basicsDf['averageRating'], errors='coerce').fillna(0)
-    basicsDf['genres'] = basicsDf['genres'].str.split(',')
-    basicsDf = basicsDf.dropna()
-    
-    return basicsDf"""
-
-def loadNewDataset():
+def getDataset():
     # Load dataset
     df = pd.read_csv('./data/imdb_top_1000.csv')
-    df_copy = df.copy()
-    
-    # Check for missing values
-    missing_values = df_copy.isnull().sum()
-    
-    # Fill missing values in 'Meta_score' and 'Gross' with 0
-    df_copy['Meta_score'].fillna(0, inplace=True)
-    df_copy['Gross'].fillna(0, inplace=True)
     
     # Clean 'Released_Year' column
     # Remove invalid entries (e.g., 'PG') and fill with a default year
@@ -51,16 +15,26 @@ def loadNewDataset():
             # Replace invalid years with a default value (e.g., 1995)
             return 1995
 
-    df_copy['Released_Year'] = df_copy['Released_Year'].apply(clean_year)
+    df['Released_Year'] = df['Released_Year'].apply(clean_year)
     
     # Convert to datetime format and extract the year
-    df_copy['Released_Year'] = pd.to_datetime(df_copy['Released_Year'], format='%Y').dt.year
+    df['Released_Year'] = pd.to_datetime(df['Released_Year'], format='%Y').dt.year
 
     # Clean 'Gross' column: Remove commas and convert to integer
-    df_copy['Gross'] = df_copy['Gross'].astype(str).str.replace(',', '').astype('Int64', errors='ignore')
-    
+    df["Gross"] = df["Gross"].str.replace(",","")
+    df["Gross"] = df["Gross"].replace(np.nan, 0)
+    df["Gross"] = df["Gross"].astype(int)
     # Clean 'Runtime' column: Extract numeric runtime
-    df_copy['Runtime'] = df_copy['Runtime'].astype(str).str.extract('(\d+)', expand=False)
-    df_copy['Runtime'] = pd.to_numeric(df_copy['Runtime'], errors='coerce').fillna(0).astype(int)
+    df['Runtime'] = df['Runtime'].astype(str).str.extract('(\d+)', expand=False)
+    df['Runtime'] = pd.to_numeric(df['Runtime'], errors='coerce').fillna(0).astype(int)
     
-    return df_copy
+    # Empy lines
+
+    # Remplacing na values in 'Meta_score' and 'Gross' with their columns mean
+    df['Meta_score'] = df['Meta_score'].fillna(df['Meta_score'].mean())
+    df["Gross"] = df["Gross"].replace(0,df['Gross'].mean())
+
+    # Remplacing na values in 'Certificate' column with 'U'
+    df['Certificate'] = df['Certificate'].fillna('U')
+
+    return df

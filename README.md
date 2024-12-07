@@ -1,61 +1,88 @@
-# IMDb - The big analysis.
+# Top 1000 des Films basés sur le score IMDb
 
-Yup.
+Ce projet a pour but de créer une application web permettant d'appliquer de l'analyse de données les 1000 films les mieux notés sur IMDb.
 
-## Installation
+- [Préambule](#préambule)
+  - [Description de la base de données](#description-de-la-base-de-données)
+  - [Installation](#installation)
+  - [Lancement de l'application](#lancement-de-lapplication)
+- [Préparation et Analyse des Données](#préparation-et-analyse-des-données)
+  - [Nettotage des données](#nettotage-des-données)
+  - [Analyse des données](#analyse-des-données)
+    - [Exploration des données](#exploration-des-données)
 
-You need to have Python 3.6+ installed on your machine and virtualenv.
+## Préambule
 
-## Setting up the environment
+### Description de la base de données
+
+La base de données (`./data/imdb_top_1000.csv`) contient les informations suivantes:
+
+| Colonne | Description |
+| --- | --- |
+| `Poster_link` | lien vers l'affiche du film |
+| `Series_Title` | titre de la série |
+| `Released_Year` | année de sortie |
+| `Certificate` | certification |
+| `Runtime` | durée du film |
+| `Genre` | genre du film |
+| `IMDB_Rating` | note IMDb |
+| `Overview` | résumé du film |
+| `Meta_score` | score Metacritic |
+| `Director` | réalisateur |
+| `Star1` | acteur principal 1 |
+| `Star2` | acteur principal 2 |
+| `Star3` | acteur principal 3 |
+| `Star4` | acteur principal 4 |
+| `No_of_Votes` | nombre de votes |
+| `Gross` | recette |
+
+Celle-ci contient les 1000 films les mieux notés sur IMDb.
+
+### Installation
+
+Vous devez avoir Python 3.6+ installé sur votre machine et virtualenv.
+
+```bash
+git clone https://github.com/rphang/AD_IMDb.git
+cd AD_IMDb
+```
+
+Vous pouvez ensuite installer les dépendances
+
 ```bash
 virtualenv venv
-source venv/bin/activate # On Windows: .\venv\Scripts\activate.bat
+source venv/bin/activate # Sur Windows: .\venv\Scripts\activate.bat
 pip install -r requirements.txt
 ```
 
-## Running the project
+### Lancement de l'application
+
 ```bash
 python app.py
 ```
 
-You can now access the project on [http://localhost:8050](http://localhost:8050).
+Vous pouvez maintenant accéder au projet sur [http://localhost:8050](http://localhost:8050).
 
+## Préparation et Analyse des Données
 
-# Context
+### Nettotage des données
 
-We have a dataset of movies, actors & ratings
+Malgré que notre dataset devrait contenir des informations sur les 1000 films les mieux notés sur IMDb, cependant les données sont imparfaites:
 
-# Cleaning
+Nous allons donc nettoyer notre dataset en **remplaçants les lignes contenant des valeurs manquantes**:
 
-- delete XXX
-- filters type ['movie', 'tvSeries', 'tvEpisode']
+| Colonne | Nombre de valeurs manquantes |
+| --- | --- |
+| `Certificate` | 101 |
+| `Meta_score` | 157 |
+| `Gross` | 169 |
 
-# EDA
+- Pour `Meta_score` et `Gross`, nous les remplaçont par la **moyenne** de la colonne.
 
-- pie charts by category, type, etc
+- Cependant, pour la Certification (`Certificate`) nous remplaçont par défaut par `U` (Ce qui représente des films pour tout public).
 
-- average movie length by decade
+### Analyse des données
 
-- average producted movies by year
+Nous allons maintenant analyser les données pour en tirer des informations pertinentes.
 
-- table of top 10 actors by number of movies
-
-- table of top 10 directors by number of movies
-
-- table of top 10 genres by number of movies
-
-- table of top 10 genres by average rating
-
-- evolution of runtime over time
-
-# Network
-
-- Average movies directed by a director
-
-
-# Cluster
-
-We can build a network of actors and movies. 
-We can then use clustering algorithms to find:
-
-- groups of actors that have worked together in the past
+#### Exploration des données

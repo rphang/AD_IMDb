@@ -7,11 +7,11 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 from sklearn.cluster import DBSCAN
-from data.loader import loadNewDataset
+from data.loader import getDataset
 from sklearn.decomposition import PCA
 
 # Load Dataset
-df = loadNewDataset()
+df = getDataset()
 
 # Preprocessing: Select Features for Clustering
 df = df.dropna(subset=['Runtime', 'IMDB_Rating', 'No_of_Votes'])  # Drop missing values
