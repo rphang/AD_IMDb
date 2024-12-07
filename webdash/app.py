@@ -37,7 +37,9 @@ sidebar = html.Div(
         ),
         dbc.Nav(
             [
-                dbc.NavLink(page["name"], href=page["relative_path"], active="exact") for page in page_registry.values()
+                dbc.NavLink(
+                    page["name"] if page["name"] != "Index" else "Home"
+                    , href=page["relative_path"], active="exact") for page in page_registry.values()
             ],
             vertical=True,
             pills=True,
