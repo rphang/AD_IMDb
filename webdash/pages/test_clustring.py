@@ -14,15 +14,14 @@ from sklearn.decomposition import PCA
 df = loadNewDataset()
 
 # Preprocessing: Select Features for Clustering
-df = df.dropna(subset=['Runtime', 'IMDB_Rating', 'No_of_Votes'])  # Drop missing values
-features = df[['Runtime', 'IMDB_Rating', 'No_of_Votes']]
+df = df.dropna(subset=['Runtime', 'No_of_Votes', 'Gross'])  # Drop missing values
+features = df[['Runtime', 'No_of_Votes', 'Gross']]
 
 # Normalize Features
 scaler = StandardScaler()
 scaled_features = scaler.fit_transform(features)
 
 
-# Apply PCA
 pca = PCA(n_components=2)  # Reduce dimensions to 2 for visualization
 pca_features = pca.fit_transform(scaled_features)
 df['PCA1'] = pca_features[:, 0]
@@ -116,30 +115,27 @@ layout = dbc.Container([
     ])
 ])
 
-# Callback for K-Means Clustering
+# K-Means Clustering Callback
 @callback(
     Output('kmeans-cluster-plot', 'figure'),
     Input('kmeans-slider', 'value')
 )
 def update_kmeans_clusters(n_clusters):
-    # Apply K-Means Clustering
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)
     df['KMeans_Cluster'] = kmeans.fit_predict(scaled_features)
-
-    # Add Cluster Labels to DataFrame
     df['KMeans_Cluster'] = df['KMeans_Cluster'].astype(str)
 
-    # Create Scatter Plot
     fig = px.scatter_3d(
         df,
         x='Runtime',
-        y='IMDB_Rating',
+        y='Gross',
         z='No_of_Votes',
         color='KMeans_Cluster',
         title=f'K-Means Clustering with {n_clusters} Clusters',
-        hover_data=['Runtime', 'IMDB_Rating', 'No_of_Votes']
+        hover_data=['Runtime', 'IMDB_Rating', 'No_of_Votes', 'Gross','Genre']
     )
     return fig
+
 
 # Callback for DBSCAN Clustering
 @callback(
@@ -159,36 +155,32 @@ def update_dbscan_clusters(eps, min_samples):
     fig = px.scatter_3d(
         df,
         x='Runtime',
-        y='IMDB_Rating',
+        y='Gross',
         z='No_of_Votes',
         color='DBSCAN_Cluster',
         title=f'DBSCAN Clustering (eps={eps}, min_samples={min_samples})',
-        hover_data=['Runtime', 'IMDB_Rating', 'No_of_Votes']
+        hover_data=['Runtime', 'IMDB_Rating', 'No_of_Votes', 'Gross', 'Genre']
     )
     return fig
 
 
-# Callback for DBSCAN Clustering with PCA
+# DBSCAN with PCA Callback
 @callback(
     Output('dbscan-pca-plot', 'figure'),
     [Input('dbscan-eps-slider', 'value'),
     Input('dbscan-min-samples-slider', 'value')]
 )
 def update_dbscan_pca_clusters(eps, min_samples):
-    # Apply DBSCAN Clustering
     dbscan = DBSCAN(eps=eps, min_samples=min_samples)
     df['DBSCAN_Cluster'] = dbscan.fit_predict(scaled_features)
-
-    # Handle noise points
     df['DBSCAN_Cluster'] = df['DBSCAN_Cluster'].apply(lambda x: 'Noise' if x == -1 else str(x))
 
-    # Create PCA Scatter Plot
     fig = px.scatter(
         df,
         x='PCA1',
         y='PCA2',
         color='DBSCAN_Cluster',
         title=f'DBSCAN Clustering with PCA (eps={eps}, min_samples={min_samples})',
-        hover_data=['Runtime', 'IMDB_Rating', 'No_of_Votes']
+        hover_data=['Runtime', 'IMDB_Rating', 'No_of_Votes', 'Gross']  # Add Gross here
     )
     return fig
