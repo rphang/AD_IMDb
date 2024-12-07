@@ -11,7 +11,7 @@ from sklearn.decomposition import PCA
 
 # Load Dataset
 df = getDataset()
-features = df[['Runtime', 'No_of_Votes', 'Gross']]
+features = df[['Runtime', 'No_of_Votes', 'Gross', 'IMDB_Rating']]
 scaler = StandardScaler()
 scaled_features = scaler.fit_transform(features)
 
@@ -21,18 +21,17 @@ pca_features = pca.fit_transform(scaled_features)
 df['PCA1'] = pca_features[:, 0]
 df['PCA2'] = pca_features[:, 1]
 
-
 # Initialize Dash App
 dash.register_page(__name__)
 
 layout = dbc.Container([
     dbc.Row([
-        dbc.Col(html.H1("Movie Clustering Analysis", className="text-center"), width=12)
+        dbc.Col(html.H1("Analyse de regroupement des films", className="text-center"), width=12)
     ]),
     dbc.Row([
         dbc.Col([
             html.H2("K-Means Clustering"),
-            html.Label("Select Number of Clusters:"),
+            html.Label("Sélectionnez le nombre de clusters :"),
             dcc.Slider(
                 id='kmeans-slider',
                 min=2,
@@ -48,7 +47,7 @@ layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             html.H2("DBSCAN Clustering"),
-            html.Label("Select DBSCAN Parameters:"),
+            html.Label("Sélectionnez les paramètres DBSCAN :"),
             html.Div([
                 html.Label("Epsilon (eps):"),
                 dcc.Slider(
@@ -75,8 +74,8 @@ layout = dbc.Container([
     html.Hr(), 
     dbc.Row([
         dbc.Col([
-            html.H2("DBSCAN Clustering with PCA"),
-            html.Label("Select DBSCAN Parameters:"),
+            html.H2("DBSCAN Clustering avec PCA"),
+            html.Label("Sélectionnez les paramètres DBSCAN :"),
             html.Div([
                 html.Label("Epsilon (eps):"),
                 dcc.Slider(
@@ -156,6 +155,6 @@ def update_dbscan_pca_clusters(eps, min_samples):
         y='PCA2',
         color='DBSCAN_Cluster',
         title=f'DBSCAN Clustering with PCA (eps={eps}, min_samples={min_samples})',
-        hover_data=['Runtime', 'IMDB_Rating', 'No_of_Votes', 'Gross'] 
+        hover_data=['Runtime', 'IMDB_Rating', 'No_of_Votes', 'Gross', 'Genre'] 
     )
     return fig

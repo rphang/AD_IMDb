@@ -28,7 +28,7 @@ certificate_counts = df['Certificate'].value_counts().reset_index()
 certificate_counts.columns = ['Certificate', 'Count']
 
 df_years_genre = df.dropna(subset=["Released_Year", "Genre"])
-df_years_genre["Released_Year"] = pd.to_numeric(df_years_genre["Released_Year"], errors="coerce")  # Ensure Year is numeric
+df_years_genre["Released_Year"] = pd.to_numeric(df_years_genre["Released_Year"], errors="coerce") 
 df_years_genre = df_years_genre.dropna(subset=["Released_Year"])
 df_years_genre["Released_Year"] = df_years_genre["Released_Year"].astype(int)
 
@@ -36,7 +36,6 @@ genre_split = df["Genre"].str.split(", ").explode()
 genre_distribution = genre_split.groupby([df["Released_Year"], genre_split]).size().unstack(fill_value=0)
 
 df_genre_gross = df[["Genre", "Gross"]]  
-df_genre_gross["Gross"] = pd.to_numeric(df_genre_gross["Gross"], errors="coerce")  
 df_genre_gross = df_genre_gross.dropna(subset=["Gross"]) 
 
 unique_genres = sorted(set(genre.strip() for genres in df['Genre'].dropna() for genre in genres.split(', ')))
@@ -52,26 +51,26 @@ avg_gross_per_year = avg_gross_per_year.dropna().sort_values('Released_Year')
 
 df_copy = df.copy()
 
-df_copy['Gross'] = df_copy['Gross'].astype(str).str.replace(',', '').astype(float, errors='ignore')  # Convert to numeric
+df_copy['Gross'] = df_copy['Gross'].astype(str).str.replace(',', '').astype(float, errors='ignore')
 df_copy['No_of_Votes'] = pd.to_numeric(df_copy['No_of_Votes'], errors='coerce')
-df_scatter = df_copy[['No_of_Votes', 'Gross']].dropna()  # Drop rows with missing values
+df_scatter = df_copy[['No_of_Votes', 'Gross']].dropna() 
 
 dash.register_page(__name__)
 layout = dbc.Container([
     dbc.Row([
-        dbc.Col(html.H1("Pairplot Visualization", className="text-center"), width=12)
+        dbc.Col(html.H1("Visualisation en Pairplot", className="text-center"), width=12)
     ]),
     dbc.Row([
         dbc.Col([
-            html.Label("Select Features for Pairplot:"),
+            html.Label("Sélectionner les caractéristiques pour le Pairplot :"),
             dcc.Dropdown(
                 id='pairplot-features',
                 options=[{'label': col, 'value': col} for col in df.select_dtypes(include=['float64', 'int64']).columns],
                 value=list(df.select_dtypes(include=['float64', 'int64']).columns),
                 multi=True,
-                placeholder="Select numerical features"
+                placeholder="Sélectionnez les caractéristiques numériques"
             ),
-            html.Button("Generate Pairplot", id="generate-pairplot", n_clicks=0, className="btn btn-primary mt-2"),
+            html.Button("Générer un Pairplot", id="generate-pairplot", n_clicks=0, className="btn btn-primary mt-2"),
             html.Div(id='pairplot-container', className="mt-4")
         ], width=12)
     ]),
@@ -85,7 +84,7 @@ layout = dbc.Container([
                     x='Count',
                     y='Director',
                     orientation='h',
-                    title="Top 10 Directors by Number of Movies",
+                    title="Top 10 des réalisateurs par nombre de films",
                     labels={'Count': 'Count', 'Director': 'Director'},
                     color_discrete_sequence=px.colors.qualitative.Bold
                 ).update_layout(
@@ -102,7 +101,7 @@ layout = dbc.Container([
                     x='Count',
                     y='Certificate',
                     orientation='h',
-                    title="Distribution of Certificates",
+                    title="Distribution des Certificates",
                     labels={'Count': 'Count', 'Certificate': 'Certificate'},
                     color_discrete_sequence=px.colors.qualitative.Pastel
                 ).update_layout(
@@ -114,7 +113,7 @@ layout = dbc.Container([
     ]),
     html.Hr(),
     dbc.Row([
-        dbc.Col(html.H1("Movie Genres Distribution", className="text-center"), width=12)
+        dbc.Col(html.H1("Répartition des genres de films", className="text-center"), width=12)
     ]),
     dbc.Row([
         dbc.Col([
@@ -123,7 +122,7 @@ layout = dbc.Container([
     ]),
     html.Hr(),
     dbc.Row([
-        dbc.Col(html.H1("Genre Trends Over the Years", className="text-center mb-4"), width=12)
+        dbc.Col(html.H1("Tendances des genres au fil des années", className="text-center mb-4"), width=12)
     ]),
     dbc.Row([
         dbc.Col([
@@ -132,7 +131,7 @@ layout = dbc.Container([
     ]),
     html.Hr(), 
     dbc.Row([
-        dbc.Col(html.H1("Average Gross Revenue by Genre", className="text-center mb-4"), width=12)
+        dbc.Col(html.H1("Revenu brut moyen par genre", className="text-center mb-4"), width=12)
     ]),
     dbc.Row([
         dbc.Col([
@@ -157,7 +156,7 @@ layout = dbc.Container([
     ]),
     html.Hr(),
     dbc.Row([
-        dbc.Col(html.H1("Correlation Between Votes and Gross", className="text-center mb-4"), width=12)
+        dbc.Col(html.H1("Corrélation entre les votes et le revenu brut", className="text-center mb-4"), width=12)
     ]),
     dbc.Row([
         dbc.Col([
@@ -167,7 +166,7 @@ layout = dbc.Container([
                     df_scatter,
                     x='No_of_Votes',
                     y='Gross',
-                    title="Correlation Between Number of Votes and Gross",
+                    title="Corrélation entre le nombre de votes et le revenu brut",
                     labels={'No_of_Votes': 'Number of Votes', 'Gross': 'Gross Revenue'},
                     trendline='ols',  
                     color_discrete_sequence=['#636EFA'] 
@@ -180,11 +179,11 @@ layout = dbc.Container([
     ]),
     html.Hr(), 
         dbc.Row([
-        dbc.Col(html.H1("Average IMDb Rating and Gross Per Year (By Genre)", className="text-center mb-4"), width=12)
+        dbc.Col(html.H1("Note moyenne IMDb et revenu brut par année (par genre)", className="text-center mb-4"), width=12)
     ]),
     dbc.Row([
         dbc.Col([
-            html.Label("Select Genre:"),
+            html.Label("Sélectionner un genre :"),
             dcc.Dropdown(
                 id='genre-dropdown',
                 options=[{'label': genre, 'value': genre} for genre in unique_genres],
@@ -221,7 +220,7 @@ def update_pairplot(n_clicks, selected_features):
         buf.close()
         return html.Img(src=f'data:image/png;base64,{encoded_image}', style={'width': '100%'})
 
-    return html.Div("Please select features and click Generate Pairplot.", style={'color': 'red', 'font-weight': 'bold'})
+    return html.Div("Veuillez sélectionner les caractéristiques et cliquer sur Générer un Pairplot", style={'color': 'red', 'font-weight': 'bold'})
 
 
 
@@ -236,7 +235,6 @@ def update_genre_plot(_):
         x='Count',
         y='Genre',
         orientation='h',
-        title="Distribution of Movie Genres",
         color='Genre', 
         labels={'Count': 'Count', 'Genre': 'Genre'}
     )
@@ -257,7 +255,6 @@ def update_genre_trends_plot(_):
         x=top_genre_distribution.index,
         y=top_genre_distribution.columns,
         labels={"value": "Count", "index": "Year"},
-        title="Count of Movies for Each Genre Over the Years (Top 5)"
     )
 
     fig.update_layout(
@@ -282,7 +279,6 @@ def update_average_gross_plot(_):
         x=average_gross.index,
         y=average_gross.values,
         labels={"x": "Genre", "y": "Average Gross Revenue"},
-        title="Average Gross Revenue for Each Genre",
         color=average_gross.index,
     )
     fig.update_layout(
@@ -315,7 +311,6 @@ def update_graphs(selected_genre):
         avg_rating_per_year,
         x='Released_Year',
         y='IMDB_Rating',
-        title=f'Average IMDb Rating Over the Years ({selected_genre})',
         labels={'Released_Year': 'Year', 'IMDB_Rating': 'Average IMDb Rating'},
         color_discrete_sequence=['#636EFA']
     ).update_layout(xaxis=dict(tickangle=45), height=500)
@@ -323,7 +318,6 @@ def update_graphs(selected_genre):
         avg_gross_per_year,
         x='Released_Year',
         y='Gross',
-        title=f'Average Gross Per Year ({selected_genre})',
         labels={'Released_Year': 'Year', 'Gross': 'Average Gross Revenue'},
         color_discrete_sequence=['#EF553B']
     ).update_layout(xaxis=dict(tickangle=45), height=500)

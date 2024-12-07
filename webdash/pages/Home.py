@@ -14,20 +14,20 @@ dash.register_page(__name__)
 # Layout
 layout = dbc.Container([
     dbc.Row([
-        dbc.Col(html.H1("Filter Movies by Rating and Genre", className="text-center mb-4"), width=12)
+        dbc.Col(html.H1("Filtrer les films par note et genre", className="text-center mb-4"), width=12)
     ]),
     dbc.Row([
         dbc.Col([
-            html.Label("Select Genre(s):"),
+            html.Label("Sélectionnez le(s) genre(s) :"),
             dcc.Dropdown(
                 id='genre-filter',
                 options=[{'label': genre, 'value': genre} for genre in df['Genre'].str.split(', ').explode().unique()],
                 multi=True,
-                placeholder="Select one or more genres"
+                placeholder="Sélectionnez un ou plusieurs genres"
             ),
         ], width=6),
         dbc.Col([
-            html.Label("Select IMDB Rating Range:"),
+            html.Label("Sélectionnez la plage de notes IMDb :"),
             dcc.RangeSlider(
                 id='rating-filter',
                 min=df['IMDB_Rating'].min(),
@@ -39,7 +39,7 @@ layout = dbc.Container([
         ], width=6),
     ]),
     dbc.Row([
-        dbc.Col(html.H3("Filtered Movies:", className="text-center mt-4"), width=12)
+        dbc.Col(html.H3("Films filtrés :", className="text-center mt-4"), width=12)
     ]),
     dbc.Row([
         dbc.Col(
