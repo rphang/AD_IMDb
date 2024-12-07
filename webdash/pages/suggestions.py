@@ -2,9 +2,9 @@ import pandas as pd
 import dash
 from dash import dcc, html, callback, Input, Output
 import dash_bootstrap_components as dbc
-from data.loader import loadNewDataset
+from data.loader import getDataset
 # Load Dataset
-df = loadNewDataset()
+df = getDataset()
 
 # Preprocess Dataset
 df['Genre'] = df['Genre'].fillna('Unknown')  # Handle missing genres
