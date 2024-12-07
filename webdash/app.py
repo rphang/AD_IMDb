@@ -4,10 +4,6 @@ import dash_bootstrap_components as dbc
 
 import plotly.express as px
 
-from data.loader import loadBasics
-
-basicsDf = loadBasics()
-
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP], use_pages=True)
 cache = Cache(app.server, config={'CACHE_TYPE': 'SimpleCache'})
 
@@ -41,7 +37,9 @@ sidebar = html.Div(
         ),
         dbc.Nav(
             [
-                dbc.NavLink(page["name"], href=page["relative_path"], active="exact") for page in page_registry.values()
+                dbc.NavLink(
+                    page["name"] if page["name"] != "Index" else "Home"
+                    , href=page["relative_path"], active="exact") for page in page_registry.values()
             ],
             vertical=True,
             pills=True,
