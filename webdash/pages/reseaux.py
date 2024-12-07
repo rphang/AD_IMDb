@@ -7,13 +7,76 @@ import plotly.graph_objects as go
 from data.loader import getDataset
 # Load Dataset
 df = getDataset()
-df = df.assign(Genre=df['Genre'].str.split(', ')).explode('Genre')
 
 actors_columns = ['Star1', 'Star2', 'Star3', 'Star4']
 
-# Step 5: Create Dash App
-dash.register_page(__name__)
+"""
+Network showing the link between Genre that are commonly associated with each other (the bigger the node, the more common the association)
+"""
+def genre_network():
+    G = nx.Graph()
+    for _, row in df.iterrows():
+        genres = row['Genre'].split(', ')
+        for genre in genres:
+            if genre not in G.nodes:
+                G.add_node(genre, weight=0)
+            for genre2 in genres:
+                if genre2 != genre:
+                    if G.has_edge(genre, genre2):
+                        G[genre][genre2]['weight'] += 1
+                    else:
+                        G.add_edge(genre, genre2, weight=1)
 
+    pos = nx.spring_layout(G, k=0.5, seed=42)
+    edge_x = []
+    edge_y = []
+    for edge in G.edges(data=True):
+        x0, y0 = pos[edge[0]]
+        x1, y1 = pos[edge[1]]
+        edge_x.extend([x0, x1, None])
+        edge_y.extend([y0, y1, None])
+
+    edge_trace = go.Scatter(
+        x=edge_x, y=edge_y,
+        line=dict(width=2, color='#888'),
+        hoverinfo='none',
+        mode='lines')
+    
+    node_x = []
+    node_y = []
+    node_text = []
+    node_size = []
+    for node in G.nodes(data=True):
+        x, y = pos[node[0]]
+        node_x.append(x)
+        node_y.append(y)
+        neighbors = list(G.neighbors(node[0]))
+        text = f"{node[0]}<br>"
+        for neighbor in neighbors:
+            text += f"{neighbor}: {G[node[0]][neighbor]['weight']}<br>"
+        node_text.append(text)
+
+    node_trace = go.Scatter(
+        x=node_x, y=node_y,
+        mode='markers',
+        text=node_text,
+        hoverinfo='text',
+        marker=dict(
+            size=node_size,
+            color='#00bfff',
+            line_width=2))
+
+    return go.Figure(data=[edge_trace, node_trace],
+                     layout=go.Layout(
+                         showlegend=False,
+                         hovermode='closest',
+                         margin=dict(l=40, r=40, t=40, b=40),
+                         xaxis=dict(showgrid=False, zeroline=False),
+                         yaxis=dict(showgrid=False, zeroline=False)
+                     ))
+
+
+dash.register_page(__name__)
 # Layout
 layout = dbc.Container([
     dbc.Row([
@@ -27,7 +90,7 @@ layout = dbc.Container([
             html.Label("Genre de film:"),
             dcc.Dropdown(
                 id='genre-dropdown',
-                options=[{'label': genre, 'value': genre} for genre in df['Genre'].unique()],
+                options=[{'label': genre, 'value': genre} for genre in df['Genre'].str.split(', ').explode().unique()],
                 value='Action'
             ),
             dcc.Graph(
@@ -52,6 +115,16 @@ layout = dbc.Container([
             )
         ], width=12)
     ]),
+    html.P("Les nœuds bleus représentent les réalisateurs et les nœuds rouges représentent les acteurs. Les connexions entre les nœuds indiquent les collaborations dans les films."),
+    html.H2("Réseaux des Genres"),
+    dbc.Row([
+        dbc.Col([
+            dcc.Graph(
+                id='genre-network',
+                figure=genre_network()
+            )
+        ], width=12)
+    ])
 ])
 
 # Callbacks
@@ -63,6 +136,7 @@ def actor_network(genre):
     df_copy = df.copy()
 
     # Filter movies by genre (Movie have multiple genres)
+    df_copy = df_copy.assign(Genre=df['Genre'].str.split(', ')).explode('Genre')
     df_copy = df_copy[df_copy['Genre'].apply(lambda x: genre in x)]
 
     # Step 1: Extract Top 20 Actors
