@@ -114,3 +114,11 @@ Le nombre de votes semble être un bon indicateur de la popularité d'un film, c
   - Budget initial
 
 On peut voir deux groupes distincts se former: les films en bas à gauche (faible nombre de votes et faible revenu) et ceux en haut à droite (grand nombre de votes et gros revenus). Cela montre que d'autres facteurs (comme le genre, la stratégie marketing ou la qualité) influencent également le revenu brut.
+
+## Réseaux - Top 50 Collaborations d'acteurs selon le genre
+
+Nous pouvons observer par le biais de ce réseaux des communautées de collaborations d'acteurs distinctes selon le genre. Par exemple, les acteurs issues de blockbusters sont souvent interconnectés entre eux (comme les acteurs de la saga du Seigneur des Anneaux, ou de la saga Marvel dans la catégorie Action). Cependant, dans le cas du genre Drama, nous pouvons observer des collaborations plus diversifiées, avec des acteurs interconnectés entre eux provenant de films différents mais nous pouvons déterminer des acteurs importants qui sont des ponts entre ces communautées tel que Brad Pitt, Al Pacino, Robert De Niro, Christian Bale, Morgan Freeman ayant un degré de centralité élevé montrant leur importance dans l'industrie cinématographique et du genre.
+
+## Clustering - Classification des films
+
+Étant donné la faible distance inter-clusters, cela indique que les films sont très similaires entre eux, ce qui peut s'expliquer par le fait que le dataset regroupe les 1000 meilleurs films selon IMDb. Cela est clairement visible dans le graphique de DBSCAN avec PCA, où l'on observe une forte densité de points concentrés dans une même région.
