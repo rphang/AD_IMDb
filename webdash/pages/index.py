@@ -9,7 +9,7 @@ df = getDataset()
 
 df['Genre'] = df['Genre'].fillna('Unknown') 
 df['IMDB_Rating'] = pd.to_numeric(df['IMDB_Rating'], errors='coerce')
-dash.register_page(__name__)
+dash.register_page(__name__, order=0, path='/')
 
 # Layout
 layout = dbc.Container([

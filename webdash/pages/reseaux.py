@@ -116,15 +116,6 @@ layout = dbc.Container([
         ], width=12)
     ]),
     html.P("Les nœuds bleus représentent les réalisateurs et les nœuds rouges représentent les acteurs. Les connexions entre les nœuds indiquent les collaborations dans les films."),
-    html.H2("Réseaux des Genres"),
-    dbc.Row([
-        dbc.Col([
-            dcc.Graph(
-                id='genre-network',
-                figure=genre_network()
-            )
-        ], width=12)
-    ])
 ])
 
 # Callbacks
