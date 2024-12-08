@@ -92,7 +92,7 @@ Nous allons donc nettoyer notre dataset en **remplaçants les lignes contenant d
 
 ### Analyse des données
 
-Nous allons maintenant analyser les données pour en tirer des informations pertinentes. Cet application Dash nous permet de visualiser les données de manière interactive. Voici quelques points clés:
+Nous allons maintenant analyser les données pour en tirer des informations pertinentes. Cette application Dash nous permet de visualiser les données de manière interactive. Voici quelques points clés:
 
 - **EDA** (Exploratory Data Analysis): Analyse et visualisation de l'ensemble de données.
 - **Network Mining**: Analyse des relations entre les acteurs et les réalisateurs.
@@ -114,7 +114,9 @@ On observe également une forte augmentation des films de genre Drame, ce qui pe
 
 ### Genre avec le plus grand revenu
 
-Le genre "Aventure" a généré le revenu brut moyen le plus élevé par film, suivi par "Science-Fiction" et "Action". Les comédies musicales ont eu le revenu brut moyen le plus bas. Ces résultats vont à l'encontre de la distribution des films par genre, car nous avons vu que les drames étaient les plus produits suivis par les comédies.
+Le genre "Aventure" se distingue par le revenu brut moyen par film le plus élevé. Il est suivi de près par la science-fiction et l'action. En revanche, les comédies musicales enregistrent le revenu moyen le plus modeste. Il est intéressant de noter que ces performances financières divergent de la distribution des films produits par genre. En effet, notre analyse a révélé que les drames sont les plus fréquemment produits, suivis par les comédies, alors qu'ils ne figurent pas parmi les plus rentables.
+
+On peut expliquer cela par le fait que les genres comme l'aventure, la science-fiction et l'action nécessitent des budgets et des délais de production plus importants que les drames et les comédies, qui eux se repose sur un impact émotionnel profond et une construction narrative plus simple. Ces genres nécéssitent souvent des effets spéciaux complexes, des décors immenses et des scènes d'action spectaculaires, nécessitant des équipes techniques et des acteurs spécialisés pour créer une expérience immersive et spectaculaire. Cependant, il reste important de noter que la production d'un film, qu'il s'agisse d'un drame ou d'une aventure, dépend de nombreux facteurs, comme le budget, le temps de production, la qualité de l'histoire et des performances des acteurs.
 
 ### Corrélation entre le nombre de votes et le budget
 
@@ -122,7 +124,7 @@ Le nombre de votes semble être un bon indicateur de la popularité d'un film, c
 
 - **Indicateur de popularité**: Un nombre élevé de votes indique généralement une popularité accrue.
 - **Revenus bruts**: Les films populaires tendent à générer plus de revenus.
-- **Exceptions**: Certains films très votés peuvent ne pas avoir des revenus élevés en raison de:
+- **Exceptions**: Certains films très votés peuvent ne pas avoir des revenus élevés en raison du:
   - Mode de diffusion
   - Budget initial
 
