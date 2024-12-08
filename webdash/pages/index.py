@@ -3,6 +3,7 @@ import dash
 from dash import dcc, html, callback, Input, Output
 import dash_bootstrap_components as dbc
 from data.loader import getDataset
+import dash_table
 # Load Dataset
 df = getDataset()
 
@@ -75,11 +76,15 @@ def update_filtered_results(selected_genres, rating_range):
     # Select relevant columns for display
     filtered_df = filtered_df[['Series_Title', 'Director', 'Star1', 'Star2', 'Star3', 'Star4']]
 
-    # Create the table
-    return dbc.Table.from_dataframe(
-        filtered_df,
-        striped=True,
-        bordered=True,
-        hover=True,
-        responsive=True
+    # Create the paginated table
+    return dash_table.DataTable(
+        data=filtered_df.to_dict('records'),  # Convert dataframe to dictionary for display
+        columns=[{"name": col, "id": col} for col in filtered_df.columns],  # Set column names
+        page_size=10,  # Number of rows per page
+        sort_action="native",  # Enable sorting
+        style_table={'overflowX': 'auto'},  # Horizontal scroll for long tables
+        style_cell={'textAlign': 'left'},  # Align text to the left
+        style_header={'fontWeight': 'bold'},  # Bold headers
+        style_data={'whiteSpace': 'normal', 'height': 'auto'},  # Wrap text for long cell values
+        filter_action="none"  # Disable the filtering feature
     )
