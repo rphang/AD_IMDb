@@ -87,11 +87,17 @@ Nous allons donc nettoyer notre dataset en **remplaçants les lignes contenant d
 
 ### Analyse des données
 
-Nous allons maintenant analyser les données pour en tirer des informations pertinentes. Cette application Dash nous permet de visualiser les données de manière interactive. Voici quelques points clés:
+Nous allons maintenant analyser les données pour en tirer des informations pertinentes. Cet application Dash nous permet de visualiser les données de manière interactive. Voici quelques points clés:
 
 - **EDA** (Exploratory Data Analysis): Analyse et visualisation de l'ensemble de données.
 - **Network Mining**: Analyse des relations entre les acteurs et les réalisateurs.
 - **Clustering et Classification**: Regroupement des films en fonction de leurs caractéristiques. (Durée, Nombre de votes, revenus, etc.)
+
+## Top 10 des réalisateurs par nombre de films :
+-   Alfred Hitchcock et Steven Spielberg dominent la liste avec le plus grand nombre de films.
+
+## Répartition des certificats :
+- Le graphique montre une prédominance des certificats "U" (Universel, tous publics), suivis de "A" (Adultes) et "UA" (Universal - Adultes avec supervision). Les certificats américains comme "PG" (Surveillance parentale) et "R" (Restreint) sont moins fréquents, indiquant une majorité de films adaptés à un large public.
 
 #### Évolution du nombre de films produits pour chaque genre parmi les 5 genres les plus fréquents
 
@@ -113,7 +119,8 @@ Le nombre de votes semble être un bon indicateur de la popularité d'un film, c
   - Mode de diffusion
   - Budget initial
 
-On peut voir deux groupes distincts se former: les films en bas à gauche (faible nombre de votes et faible revenu) et ceux en haut à droite (grand nombre de votes et gros revenus). Cela montre que d'autres facteurs (comme le genre, la stratégie marketing ou la qualité) influencent également le revenu brut.
+## revenu brut moyenne :
+- On observe une augmentation générale des revenus bruts moyens au fil des décennies, avec des pics significatifs autour des années 1980 et 2020, indiquant des périodes où des films particulièrement lucratifs ont été produits. Cette tendance peut refléter des budgets de production croissants, une hausse des prix des billets, ou des succès commerciaux majeurs au cours de ces périodes
 
 ## Réseaux - Top 50 Collaborations d'acteurs selon le genre
 
