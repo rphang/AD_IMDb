@@ -13,6 +13,9 @@ dash.register_page(__name__, order=0, path='/')
 
 # Layout
 layout = dbc.Container([
+     dbc.Row([
+        dbc.Col(dcc.Markdown(open('README.md',encoding='utf-8').read()), width=12)
+    ]),
     dbc.Row([
         dbc.Col(html.H1("Filtrer les films par note et genre", className="text-center mb-4"), width=12)
     ]),
